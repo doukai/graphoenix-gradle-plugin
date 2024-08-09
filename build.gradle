@@ -2,23 +2,23 @@ plugins {
     id 'java-gradle-plugin'
     id 'groovy'
     id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '1.2.1'
 }
 
 group 'org.graphoenix'
-version '0.1.0-SNAPSHOT'
+version '0.1.1'
 
 repositories {
     mavenCentral()
     jcenter()
-    mavenLocal()
 }
 
 dependencies {
-    implementation 'org.graphoenix:graphoenix-core:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:graphoenix-java:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:graphoenix-protobuf:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:graphoenix-core:0.1.0'
+    implementation 'org.graphoenix:graphoenix-java:0.1.0'
+    implementation 'org.graphoenix:graphoenix-protobuf:0.1.0'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0'
     implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
     implementation('org.antlr:antlr4:4.9.3') {
         exclude group: 'org.glassfish', module: 'javax.json'
@@ -32,10 +32,19 @@ test {
     useJUnitPlatform()
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
+pluginBundle {
+    website = 'https://github.com/doukai/graphoenix-ce'
+    vcsUrl = 'https://github.com/doukai/graphoenix-ce.git'
+    tags = ['graphoenix', 'graphql', 'protobuf']
+}
+
+gradlePlugin {
+    plugins {
+        graphoenixPlugin {
+            id = 'org.graphoenix'
+            displayName = 'Gradle plugin for Graphoenix'
+            description = 'Generate Java DTO and protobuf based on GraphQL definition'
+            implementationClass = 'io.graphoenix.gradle.GraphoenixPlugin'
         }
     }
 }
