@@ -1,0 +1,41 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+    id 'maven-publish'
+}
+
+group 'org.graphoenix'
+version '0.1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'org.graphoenix:graphoenix-core:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:graphoenix-java:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:graphoenix-protobuf:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
+    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
+    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
+    implementation('org.antlr:antlr4:4.9.3') {
+        exclude group: 'org.glassfish', module: 'javax.json'
+    }
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
