@@ -209,19 +209,19 @@ public class BaseTask extends DefaultTask {
 
         objectTypeList.stream()
                 .map(this::buildObject)
-                .forEach(objectType -> documentManager.getDocument().merge(objectType));
+                .forEach(objectType -> documentManager.getDocument().addDefinition(objectType));
 
         interfaceTypeList.stream()
                 .map(this::buildInterface)
-                .forEach(interfaceType -> documentManager.getDocument().merge(interfaceType));
+                .forEach(interfaceType -> documentManager.getDocument().addDefinition(interfaceType));
 
         inputTypeList.stream()
                 .map(this::buildInputObject)
-                .forEach(interfaceType -> documentManager.getDocument().merge(interfaceType));
+                .forEach(interfaceType -> documentManager.getDocument().addDefinition(interfaceType));
 
         enumTypeList.stream()
                 .map(this::buildEnum)
-                .forEach(enumType -> documentManager.getDocument().merge(enumType));
+                .forEach(enumType -> documentManager.getDocument().addDefinition(enumType));
 
         compilations.forEach(compilationUnit ->
                 compilationUnit.getTypes().stream()
