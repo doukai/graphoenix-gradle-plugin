@@ -12,13 +12,22 @@ repositories {
     mavenLocal()
 }
 
+sourceSets.configureEach {
+    configurations.named(runtimeClasspathConfigurationName) {
+        attributes.attribute(Attribute.of("org.gradle.jvm.environment", String), "standard-jvm")
+    }
+    configurations.named(compileClasspathConfigurationName) {
+        attributes.attribute(Attribute.of("org.gradle.jvm.environment", String), "standard-jvm")
+    }
+}
+
 dependencies {
     implementation 'org.graphoenix:graphoenix-core:0.1.0-SNAPSHOT'
     implementation 'org.graphoenix:graphoenix-java:0.1.0-SNAPSHOT'
     implementation 'org.graphoenix:graphoenix-protobuf:0.1.0-SNAPSHOT'
     implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
     implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
+    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.26.3'
     implementation('org.antlr:antlr4:4.9.3') {
         exclude group: 'org.glassfish', module: 'javax.json'
     }
