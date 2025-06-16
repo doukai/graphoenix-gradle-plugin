@@ -4,6 +4,14 @@ plugins {
     id 'maven-publish'
 }
 
+ext {
+    graphoenixVersion = '0.1.0-SNAPSHOT'
+    nozdormuVersion = '0.1.0-SNAPSHOT'
+    protocVersion = '3.25.8'
+    protocGenGrpcJavaVersion = '1.73.0'
+    protobufPluginVersion = '0.9.5'
+}
+
 group 'org.graphoenix'
 version '0.1.0-SNAPSHOT'
 
@@ -22,18 +30,21 @@ sourceSets.configureEach {
 }
 
 dependencies {
-    implementation 'org.graphoenix:graphoenix-core:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:graphoenix-java:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:graphoenix-protobuf:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-inject:0.1.0-SNAPSHOT'
-    implementation 'org.graphoenix:nozdormu-config:0.1.0-SNAPSHOT'
-    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.26.3'
-    implementation('org.antlr:antlr4:4.9.3') {
+    implementation platform("org.graphoenix:graphoenix-platform:$graphoenixVersion")
+    implementation platform("org.graphoenix:nozdormu-platform:$nozdormuVersion")
+
+    implementation 'org.graphoenix:graphoenix-core'
+    implementation 'org.graphoenix:graphoenix-java'
+    implementation 'org.graphoenix:graphoenix-protobuf'
+    implementation 'org.graphoenix:nozdormu-inject'
+    implementation 'org.graphoenix:nozdormu-config'
+    implementation 'com.github.javaparser:javaparser-symbol-solver-core'
+    implementation('org.antlr:antlr4') {
         exclude group: 'org.glassfish', module: 'javax.json'
     }
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
