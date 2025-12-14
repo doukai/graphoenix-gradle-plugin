@@ -77,8 +77,10 @@ import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
 
 public class BaseTask extends DefaultTask {
 
-    private DocumentManager documentManager;
-    private PackageConfig packageConfig;
+    private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
+    private final Config config = BeanContext.get(Config.class);
+    private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
+    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
 
     protected static final String MAIN_PATH = "src" + File.separator + "main";
     protected static final String MAIN_JAVA_PATH = MAIN_PATH + File.separator + "java";
@@ -91,13 +93,8 @@ public class BaseTask extends DefaultTask {
         try {
             ClassLoader classLoader = createClassLoader();
             BeanContext.load(classLoader);
-            Config config = BeanContext.get(Config.class);
             ((TypesafeConfig) config).load(resourcePath);
-            packageConfig = BeanContext.get(PackageConfig.class);
             findDefaultPackageName().ifPresent(packageConfig::setPackageName);
-            documentManager = BeanContext.get(DocumentManager.class);
-            GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-
             documentManager.getDocument().clear();
             configRegister.registerConfig(resourcePath);
         } catch (IOException e) {

@@ -1,6 +1,5 @@
 package io.graphoenix.gradle.task;
 
-import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.config.PackageConfig;
 import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
@@ -23,22 +22,20 @@ import java.util.regex.Matcher;
 
 public class GenerateProtobufV3Task extends BaseTask {
 
+    private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
+    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+    private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+    private final ProtobufFileBuilder protobufFileBuilder = BeanContext.get(ProtobufFileBuilder.class);
+
     @TaskAction
     public void generateProtobufV3Task() {
         init();
-        GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
-        PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
-        GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
-        ProtobufFileBuilder protobufFileBuilder = BeanContext.get(ProtobufFileBuilder.class);
         SourceSet sourceSet = getProject().getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         String javaPath = sourceSet.getJava().getSourceDirectories().filter(file -> file.getPath().contains(MAIN_JAVA_PATH)).getAsPath();
         Path protoPath = Path.of(javaPath).getParent().resolve("proto").resolve(packageConfig.getPackageName().replaceAll("\\.", Matcher.quoteReplacement(File.separator)));
         try {
             configRegister.registerPackage(createClassLoader());
-            if (graphQLConfig.getBuild()) {
-                documentBuilder.build();
-            }
+            documentBuilder.build();
             registerInvoke();
             documentBuilder.buildInvoker();
             if (Files.notExists(protoPath)) {

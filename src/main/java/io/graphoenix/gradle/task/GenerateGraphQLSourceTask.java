@@ -1,6 +1,5 @@
 package io.graphoenix.gradle.task;
 
-import io.graphoenix.core.config.GraphQLConfig;
 import io.graphoenix.core.handler.DocumentBuilder;
 import io.graphoenix.core.handler.GraphQLConfigRegister;
 import io.graphoenix.java.builder.JavaFileBuilder;
@@ -17,20 +16,18 @@ import java.net.URISyntaxException;
 
 public class GenerateGraphQLSourceTask extends BaseTask {
 
+    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+    private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+    private final JavaFileBuilder javaFileBuilder = BeanContext.get(JavaFileBuilder.class);
+
     @TaskAction
     public void generateGraphQLSourceTask() {
         init();
-        GraphQLConfig graphQLConfig = BeanContext.get(GraphQLConfig.class);
-        GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-        DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
-        JavaFileBuilder javaFileBuilder = BeanContext.get(JavaFileBuilder.class);
         SourceSet sourceSet = getProject().getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         String javaPath = sourceSet.getJava().getSourceDirectories().filter(file -> file.getPath().contains(MAIN_JAVA_PATH)).getAsPath();
         try {
             configRegister.registerPackage(createClassLoader());
-            if (graphQLConfig.getBuild()) {
-                documentBuilder.build();
-            }
+            documentBuilder.build();
             registerInvoke();
             documentBuilder.buildInvoker();
             javaFileBuilder.writeToPath(new File(javaPath));
