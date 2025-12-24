@@ -9,7 +9,8 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 
 public class GenerateProtobufV3Task extends BaseTask {
+
+    private static final Logger logger = LoggerFactory.getLogger(GenerateProtobufV3Task.class);
 
     private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
     private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
@@ -49,7 +52,7 @@ public class GenerateProtobufV3Task extends BaseTask {
                 );
             }
         } catch (IOException | URISyntaxException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new TaskExecutionException(this, e);
         }
     }

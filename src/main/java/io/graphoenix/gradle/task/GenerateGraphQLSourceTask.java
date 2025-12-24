@@ -8,13 +8,16 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskExecutionException;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class GenerateGraphQLSourceTask extends BaseTask {
+
+    private static final Logger logger = LoggerFactory.getLogger(GenerateGraphQLSourceTask.class);
 
     private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
     private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
@@ -32,7 +35,7 @@ public class GenerateGraphQLSourceTask extends BaseTask {
             documentBuilder.buildInvoker();
             javaFileBuilder.writeToPath(new File(javaPath));
         } catch (IOException | URISyntaxException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new TaskExecutionException(this, e);
         }
     }

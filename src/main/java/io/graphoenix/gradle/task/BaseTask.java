@@ -50,7 +50,8 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskExecutionException;
-import org.tinylog.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -77,6 +78,8 @@ import static io.graphoenix.spi.error.GraphQLErrorType.UNSUPPORTED_FIELD_TYPE;
 
 public class BaseTask extends DefaultTask {
 
+    private static final Logger logger = LoggerFactory.getLogger(BaseTask.class);
+
     private final DocumentManager documentManager = BeanContext.get(DocumentManager.class);
     private final Config config = BeanContext.get(Config.class);
     private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
@@ -98,7 +101,7 @@ public class BaseTask extends DefaultTask {
             documentManager.getDocument().clear();
             configRegister.registerConfig(resourcePath);
         } catch (IOException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new TaskExecutionException(this, e);
         }
     }
@@ -116,7 +119,7 @@ public class BaseTask extends DefaultTask {
                 }
             }
         } catch (MalformedURLException e) {
-            Logger.error(e);
+            logger.error(e.getMessage(), e);
             throw new TaskExecutionException(this, e);
         }
         return new URLClassLoader(urls.toArray(new URL[0]), getClass().getClassLoader());
@@ -494,7 +497,7 @@ public class BaseTask extends DefaultTask {
                 ResolvedReferenceType resolvedReferenceType = type.resolve().asReferenceType();
                 return resolve(resolvedReferenceType);
             } catch (UnsolvedSymbolException e) {
-                Logger.warn(e);
+                logger.warn(e.getMessage(), e);
             }
         }
         return Optional.empty();
@@ -510,7 +513,7 @@ public class BaseTask extends DefaultTask {
                 return getInvokeFieldTypeName(type.asClassOrInterfaceType().resolve().asReferenceType()).getTypeName().getName();
             }
         } catch (UnsolvedSymbolException e) {
-            Logger.warn(e);
+            logger.warn(e.getMessage(), e);
         }
         return type.asString();
     }
