@@ -95,7 +95,7 @@ public class BaseTask extends DefaultTask {
 
         try {
             ClassLoader classLoader = createClassLoader();
-            BeanContext.load(classLoader);
+            BeanContext.setClassLoader(classLoader);
             ((TypesafeConfig) config).load(resourcePath);
             findDefaultPackageName().ifPresent(packageConfig::setPackageName);
             documentManager.getDocument().clear();
