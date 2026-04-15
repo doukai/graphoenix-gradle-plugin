@@ -23,37 +23,52 @@ import java.util.regex.Matcher;
 
 public class GenerateProtobufV3Task extends BaseTask {
 
-    private static final Logger logger = LoggerFactory.getLogger(GenerateProtobufV3Task.class);
+  private static final Logger logger = LoggerFactory.getLogger(GenerateProtobufV3Task.class);
 
-    private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
-    private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
-    private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
-    private final ProtobufFileBuilder protobufFileBuilder = BeanContext.get(ProtobufFileBuilder.class);
+  private final PackageConfig packageConfig = BeanContext.get(PackageConfig.class);
+  private final GraphQLConfigRegister configRegister = BeanContext.get(GraphQLConfigRegister.class);
+  private final DocumentBuilder documentBuilder = BeanContext.get(DocumentBuilder.class);
+  private final ProtobufFileBuilder protobufFileBuilder =
+      BeanContext.get(ProtobufFileBuilder.class);
 
-    @TaskAction
-    public void generateProtobufV3Task() {
-        init();
-        SourceSet sourceSet = getProject().getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-        String javaPath = sourceSet.getJava().getSourceDirectories().filter(file -> file.getPath().contains(MAIN_JAVA_PATH)).getAsPath();
-        Path protoPath = Path.of(javaPath).getParent().resolve("proto").resolve(packageConfig.getPackageName().replaceAll("\\.", Matcher.quoteReplacement(File.separator)));
-        try {
-            configRegister.registerPackage(createClassLoader());
-            documentBuilder.build();
-            registerInvoke();
-            documentBuilder.buildInvoker();
-            if (Files.notExists(protoPath)) {
-                Files.createDirectories(protoPath);
-            }
-            Set<Map.Entry<String, String>> entries = protobufFileBuilder.buildProto3().entrySet();
-            for (Map.Entry<String, String> entry : entries) {
-                Files.writeString(
-                        protoPath.resolve(entry.getKey() + ".proto"),
-                        entry.getValue()
-                );
-            }
-        } catch (IOException | URISyntaxException e) {
-            logger.error(e.getMessage(), e);
-            throw new TaskExecutionException(this, e);
-        }
+  @TaskAction
+  public void generateProtobufV3Task() {
+    init();
+    SourceSet sourceSet =
+        getProject()
+            .getConvention()
+            .getPlugin(JavaPluginConvention.class)
+            .getSourceSets()
+            .getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+    String javaPath =
+        sourceSet
+            .getJava()
+            .getSourceDirectories()
+            .filter(file -> file.getPath().contains(MAIN_JAVA_PATH))
+            .getAsPath();
+    Path protoPath =
+        Path.of(javaPath)
+            .getParent()
+            .resolve("proto")
+            .resolve(
+                packageConfig
+                    .getPackageName()
+                    .replaceAll("\\.", Matcher.quoteReplacement(File.separator)));
+    try {
+      configRegister.registerPackage(createClassLoader());
+      documentBuilder.build();
+      registerInvoke();
+      documentBuilder.buildInvoker();
+      if (Files.notExists(protoPath)) {
+        Files.createDirectories(protoPath);
+      }
+      Set<Map.Entry<String, String>> entries = protobufFileBuilder.buildProto3().entrySet();
+      for (Map.Entry<String, String> entry : entries) {
+        Files.writeString(protoPath.resolve(entry.getKey() + ".proto"), entry.getValue());
+      }
+    } catch (IOException | URISyntaxException e) {
+      logger.error(e.getMessage(), e);
+      throw new TaskExecutionException(this, e);
     }
+  }
 }
