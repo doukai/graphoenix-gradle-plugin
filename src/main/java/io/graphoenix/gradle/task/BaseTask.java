@@ -37,6 +37,7 @@ import io.graphoenix.spi.error.GraphQLErrors;
 import io.graphoenix.spi.graphql.common.ArrayValueWithVariable;
 import io.graphoenix.spi.graphql.common.Directive;
 import io.graphoenix.spi.graphql.common.ObjectValueWithVariable;
+import io.graphoenix.spi.graphql.operation.Field;
 import io.graphoenix.spi.graphql.type.*;
 import io.nozdormu.config.TypesafeConfig;
 import io.nozdormu.spi.async.Async;
@@ -586,6 +587,14 @@ public class BaseTask extends DefaultTask {
                                                         methodDeclaration.getType()))
                                                 .setArguments(
                                                     methodDeclaration.getParameters().stream()
+                                                        .filter(
+                                                            parameter ->
+                                                                parameter
+                                                                    .getType()
+                                                                    .asString()
+                                                                    .equals(
+                                                                        Field.class
+                                                                            .getCanonicalName()))
                                                         .map(
                                                             parameter ->
                                                                 new InputValue(
@@ -695,6 +704,14 @@ public class BaseTask extends DefaultTask {
                                                         methodDeclaration.getType()))
                                                 .setArguments(
                                                     methodDeclaration.getParameters().stream()
+                                                        .filter(
+                                                            parameter ->
+                                                                parameter
+                                                                    .getType()
+                                                                    .asString()
+                                                                    .equals(
+                                                                        Field.class
+                                                                            .getCanonicalName()))
                                                         .map(
                                                             parameter ->
                                                                 new InputValue(
