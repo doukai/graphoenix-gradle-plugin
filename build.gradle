@@ -4,6 +4,8 @@ plugins {
     id 'maven-publish'
 }
 
+import org.gradle.api.attributes.java.TargetJvmEnvironment
+
 ext {
     graphoenixVersion = '0.1.0-SNAPSHOT'
     nozdormuVersion = '0.1.0-SNAPSHOT'
@@ -19,10 +21,16 @@ repositories {
 
 sourceSets.configureEach {
     configurations.named(runtimeClasspathConfigurationName) {
-        attributes.attribute(Attribute.of("org.gradle.jvm.environment", String), "standard-jvm")
+        attributes.attribute(
+                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                objects.named(TargetJvmEnvironment, TargetJvmEnvironment.STANDARD_JVM)
+        )
     }
     configurations.named(compileClasspathConfigurationName) {
-        attributes.attribute(Attribute.of("org.gradle.jvm.environment", String), "standard-jvm")
+        attributes.attribute(
+                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                objects.named(TargetJvmEnvironment, TargetJvmEnvironment.STANDARD_JVM)
+        )
     }
 }
 
